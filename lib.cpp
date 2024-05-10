@@ -4,6 +4,7 @@
 #include <raylib.h>
 #include <string>
 
+// I couldn't think of a better way to do this, should work fine though, I think
 float WIDTH() {
     return GetMonitorWidth(GetCurrentMonitor());
 }
@@ -132,9 +133,17 @@ Vec Vec::operator-(Vec const& other) {
     return (Vec){this->x - other.x, this->y - other.y};
 }
 
+Vec Vec::operator+(Vec const& other) {
+    return (Vec){this->x + other.x, this->y + other.y};
+}
+
 void Vec::operator*=(Vec const& other) {
     this->x *= other.x;
     this->y *= other.y;
+}
+
+Vec Vec::operator*(float num) {
+    return (Vec){this->x * num, this->y * num};
 }
 
 void Vec::operator/=(Vec const& other) {

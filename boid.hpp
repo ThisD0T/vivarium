@@ -28,14 +28,14 @@ class Boid {
     float max_steer;
     float sight_dist;
 
-    float sep_mag;
-    float align_mag;
-    float cohes_mag;
+    float sep_weight;
+    float align_weight;
+    float cohes_weight;
 
     void draw();
     void flock();
     void calc_others(unordered_set<shared_ptr<Boid>> others);
-    Vec separation(Vec avg_others);
+    Vec separation();
     Vec alignment(Vec average_other_vel);
     Vec cohesion(Vec avg_others);
     Vec apply_steering(Vec wishpos);

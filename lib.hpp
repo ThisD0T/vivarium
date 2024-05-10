@@ -32,7 +32,9 @@ class Vec {
 
     void operator+=(Vec const& other);
     Vec operator-(Vec const & other);
+    Vec operator+(Vec const & other);
     void operator*=(Vec const& other);
+    Vec operator*(float num);
     void operator/=(Vec const& other);
     void operator/=(float const& other);
 

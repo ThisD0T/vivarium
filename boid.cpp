@@ -13,15 +13,15 @@ Boid::Boid(Texture2D* image, float size) {
     int frame_width = m_image->width;
     int frame_height = m_image->height;
 
-    sight_dist = 300;
-    max_steer = 3.9;
-    max_speed = 2.4;
+    sight_dist = 250;
+    max_steer = 4.6;
+    max_speed = 9.2;
 
-    cohes_mag = max_steer * .7;
-    sep_mag = max_steer * .9;
-    align_mag = max_steer * .6;
+    cohes_weight = 2;
+    align_weight = 2;
+    sep_weight =2;
 
-    velocity = random_vector(1, 3);
+    velocity = random_vector(1, 7);
     acceleration = Vec();
     position = random_position();
     print_vector(position, "position");
@@ -56,9 +56,9 @@ void Boid::flock() {
     Vec acceleration = (Vec){0, 0};
 
     //acceleration += avoid_edges().scaled(GetFrameTime());
-    acceleration += alignment(avg_other_vel).scaled(GetFrameTime());
-    acceleration += separation(avg_others).scaled(GetFrameTime());
-    acceleration += cohesion(avg_others).scaled(GetFrameTime());
+    acceleration += alignment(avg_other_vel).scaled(GetFrameTime()) * align_weight;
+    acceleration += separation().scaled(GetFrameTime()) * sep_weight;
+    acceleration += cohesion(avg_others).scaled(GetFrameTime()) * cohes_weight;
 
     velocity.Add(acceleration);
 }
@@ -115,22 +115,30 @@ Vec Boid::avoid_edges() {
 }
 
 Vec Boid::alignment(Vec avg) {
-    apply_steering(avg);
     avg.set_mag(align_mag);
+    apply_steering(avg);
     return avg;
 }
 
-Vec Boid::separation(Vec avg_others) {
-    Vec separation = avg_others.scaled(-1);
-    separation = separation - this->position;
-    separation /= pow(separation.mag(), 2);
-    separation.set_mag(sep_mag);
+Vec Boid::separation() {
+    Vec separation = Vec(),
+        diff;
+
+    for (auto other : m_others) {
+        diff = other->position - this->position;
+        diff /= pow(diff.mag(), 2);
+
+        separation += diff;
+    }
+
+    separation /= m_others.size();
+
     return apply_steering(separation);
 }
 
 Vec Boid::cohesion(Vec avg_others) {
     Vec cohesion = avg_others;
     cohesion = cohesion - this->position;
-    cohesion.set_mag(cohes_mag);
+    cohesion *= cohes_weight;
     return apply_steering(cohesion);
 }
